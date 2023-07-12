@@ -54,8 +54,9 @@ jobs:
           # Must be relative path from root
           paths:
             - venv
-            - training_data
+            - ml
             - .env
+            - tools
   train-test-package:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
