@@ -29,6 +29,7 @@ commands:
           command: sleep 5
           name: Wait 5 seconds
 
+
 # Define custom jobs for this config
 # See: https://circleci.com/docs/jobs-steps/
 jobs:
@@ -74,7 +75,7 @@ jobs:
           name: Run script to install dependencies
       - run:
           command: python3 ./ml/1_build.py
-          name: Build the model
+          name: Rebuild testing/training data
       - run:
           command: python3 ./ml/6_retrain.py
           name: Retrain the model
@@ -96,6 +97,11 @@ jobs:
     #   - image: cimg/python:3.11.4
     steps:
       - checkout
+      - check-python # Invoke command "check-python"
+      - create-env   
+      - run: 
+          command: sh ./tools/install.sh
+          name: Run script to install dependencies 
       - run:
           command: sh ./ml/5_deploy.sh
           name: Deploy the model
@@ -110,6 +116,12 @@ jobs:
       - checkout
       - check-python # Invoke command "check-python"
       - create-env     
+      - run: 
+        command: sh ./tools/install.sh
+        name: Run script to install dependencies
+      - run:
+        command: python3 ./ml/1_build.py
+        name: Rebuild test data
       - wait-5
       - run:
           command: python3 ./ml/7_test_deployed_model.py
