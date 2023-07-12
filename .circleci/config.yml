@@ -34,7 +34,6 @@ commands:
 # See: https://circleci.com/docs/jobs-steps/
 jobs:
   install-build:
-    working_directory: /tmp
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
@@ -62,7 +61,6 @@ jobs:
             - .env
             - tools
   train-test-package:
-    working_directory: /tmp
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
@@ -86,7 +84,6 @@ jobs:
           command: python3 ./ml/4_package.py
           name: Package the model  
   retrain-package:
-    working_directory: /tmp
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
@@ -113,7 +110,6 @@ jobs:
               echo "I am result of above failed job" 
           when: on_fail
   deploy:
-    working_directory: /tmp
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
@@ -128,7 +124,6 @@ jobs:
           command: python3 ./ml/5_deploy.py
           name: Deploy the model
   test-deployment:
-    working_directory: /tmp
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
