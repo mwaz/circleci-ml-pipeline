@@ -1,0 +1,161 @@
+version: 2.1
+
+# Define custom jobs for this config
+# See: https://circleci.com/docs/jobs-steps/
+jobs:
+  install:
+    # For running on CircleCI's self-hosted runners - details taken from environment variables
+    machine: true
+    resource_class: $RUNNER_NAMESPACE/$RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    # For running on CircleCI's compute resources
+    # docker:
+    #   - image: cimg/python:3.11.4
+    steps:
+      - checkout
+      - run:
+          command: python3 --version
+          name: Check Python version
+      - run:
+        # Environment variables must be configured in CircleCI project or in a context
+        command: |
+          cat \<<- EOF > .env
+          DEPLOY_SERVER_HOSTNAME=$DEPLOY_SERVER_HOSTNAME
+          DEPLOY_SERVER_USERNAME=$DEPLOY_SERVER_USERNAME
+          DEPLOY_SERVER_PASSWORD=$DEPLOY_SERVER_PASSWORD
+          DEPLOY_SERVER_PATH=$DEPLOY_SERVER_PATH
+          EOF
+        name: Create example .env file containing secrets
+      - run: 
+          command: sh ./tools/install.sh
+          name: Run script to install dependencies
+  build:
+    steps:
+      - run:
+        command: python3 ./ml/1_build.py
+        name: Build the model
+  train:
+    steps:
+      - run:
+        command: python3 ./ml/2_train.py
+        name: Train the model
+  test:
+    steps:
+      - run:
+        command: python3 ./ml/3_test.py
+        name: Test the model
+  package:
+    steps:
+      - run
+        command: python3 ./ml/4_package.py
+        name: Package the model  
+  deploy:
+    steps:
+      - hold: # <<< A job that will require manual approval in the CircleCI web application.
+        type: approval # <<< This key-value pair will set your workflow to a status of "On Hold"
+      - run:
+        command: sh ./ml/5_deploy.sh
+        name: Deploy the model
+  retrain:
+    steps:
+      - run:
+        command: python3 ./ml/6_retrain.py
+        name: Retrain the model
+  test-deployment:
+    steps:
+      - run:
+        command: python3 ./ml/7_test_deployed_model.py
+        name: Test the deployed model
+  wait-5:
+    steps:
+      - run:
+        command: sleep 5
+        name: Wait 5 seconds
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/workflows/
+workflows:
+  # This workflow does a full build from scratch, and deploys the model
+  full-build:
+    # filters:
+    #   branches: # You can also use tags, or a combination of both
+    #     only:
+    #       - main
+    jobs:
+      - install
+      - build:
+          requires:
+            - install # Only run the job when the preceding step in the ML process has completed so that they are run sequentially
+      - train:
+          requires:
+            - build
+      # To demonstrate how to run two tests concurrently, we'll run the same test twice under different names - if either required test fails, the next step will not run
+      - test:
+          name: test_1
+          requires:
+            - train
+      - test:
+          name: test_2
+          requires:
+            - train
+      - package:
+          requires:
+            - test_1
+            - test_2
+      - hold: # A job that will require manual approval in the CircleCI web application.
+          type: approval # This key-value pair will set your workflow to a status of "On Hold"
+      - deploy:
+          requires:
+            - package
+      - wait-5: # Tensorflow Serviing can sometimes take a few seconds to reload the model, so we'll wait
+          requires:
+            - deploy
+      - test-deployment:
+          requires:
+            - deploy
+            - wait-5
+  # This workflow retrains an existing model and redeploys it
+  retrain:
+  #  triggers:
+  #     - schedule:
+  #         cron: "0 0 * * *"
+  #         filters:
+  #           branches:
+  #             only:
+  #               - main
+  #               - beta
+    jobs:
+      - install
+      - build:
+          requires:
+            - install
+      - retrain:
+          requires:
+            - build
+      - package:
+          requires:
+            - retrain
+      - deploy:
+          requires:
+            - package
+      - wait-5:
+          requires:
+            - deploy
+      - test-deployment:
+          requires:
+            - deploy
+            - wait-5
+      - run:
+          # You could trigger custom notifications here so that those in charge of supplying retraining can check their input data
+          name: Run on fail status
+          command: |
+              echo "I am result of above failed job" 
+          when: on_fail
+
+# todo:
+# add a condition based on an env var to choose the deploy location - runner or cloud
+# maybe as part of the pipeline we should have CCI look for a specific word in the output of one of the steps and firing of an email about it or something - eg 'test accuracy 95% on blah' - could be cool example 
+
+
+# demo conditionals in retrain - if test fails , optionally trigger a full rebuild of the model https://support.circleci.com/hc/en-us/articles/360043638052-Conditional-steps-in-jobs-and-conditional-workflows
+# actually this is better suited for test_deploy - retry it 3 times with a 5s delay between each retry in case the server is slow
+
