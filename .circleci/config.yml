@@ -36,7 +36,7 @@ jobs:
   build-train-test-package:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
-    resource_class: $RUNNER_NAMESPACE/$RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
     # For running on CircleCI's compute resources
     # docker:
     #   - image: cimg/python:3.11.4
@@ -62,7 +62,7 @@ jobs:
   build-retrain-package:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
-    resource_class: $RUNNER_NAMESPACE/$RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
     # For running on CircleCI's compute resources
     # docker:
     #   - image: cimg/python:3.11.4
@@ -91,7 +91,7 @@ jobs:
   deploy:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
-    resource_class: $RUNNER_NAMESPACE/$RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
     # For running on CircleCI's compute resources
     # docker:
     #   - image: cimg/python:3.11.4
@@ -108,7 +108,7 @@ jobs:
   test-deployment:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
-    resource_class: $RUNNER_NAMESPACE/$RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
     # For running on CircleCI's compute resources
     # docker:
     #   - image: cimg/python:3.11.4
