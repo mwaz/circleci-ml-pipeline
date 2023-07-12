@@ -117,11 +117,11 @@ jobs:
       - check-python # Invoke command "check-python"
       - create-env     
       - run: 
-        command: sh ./tools/install.sh
-        name: Run script to install dependencies
+          command: sh ./tools/install.sh
+          name: Run script to install dependencies
       - run:
-        command: python3 ./ml/1_build.py
-        name: Rebuild test data
+          command: python3 ./ml/1_build.py
+          name: Rebuild test data
       - wait-5
       - run:
           command: python3 ./ml/7_test_deployed_model.py
