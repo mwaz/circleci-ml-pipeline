@@ -103,7 +103,7 @@ jobs:
           command: sh ./tools/install.sh
           name: Run script to install dependencies 
       - run:
-          command: sh ./ml/5_deploy.sh
+          command: python3 ./ml/5_deploy.py
           name: Deploy the model
   test-deployment:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
