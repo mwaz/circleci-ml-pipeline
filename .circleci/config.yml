@@ -140,11 +140,12 @@ workflows:
                 - main # Only run the job when the main branch is updated
       # Do not deploy without manual approval - you can inspect the console output from training and make sure you are happy to deploy
       - hold: # A job that will require manual approval in the CircleCI web application.
-          requires: build-train-test-package 
+          requires: 
+            - build-train-test-package 
           type: approval # This key-value pair will set your workflow to a status of "On Hold"
       - deploy:
           requires: # Only run the job when the preceding step in the ML process has completed so that they are run sequentially
-            - build-train-test-package 
+            - hold 
       - test-deployment:
           requires:
             - deploy
@@ -165,11 +166,12 @@ workflows:
                   - retrain
         # Do not deploy without manual approval - you can inspect the console output from training and make sure you are happy to deploy
         - hold: # A job that will require manual approval in the CircleCI web application.
-            requires: build-retrain-package
+            requires: 
+              - build-retrain-package
             type: approval # This key-value pair will set your workflow to a status of "On Hold"
         - deploy:
             requires:
-              - build-retrain-package
+              - hold
         - test-deployment:
             requires:
               - deploy
