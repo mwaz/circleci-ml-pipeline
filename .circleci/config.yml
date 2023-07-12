@@ -33,7 +33,30 @@ commands:
 # Define custom jobs for this config
 # See: https://circleci.com/docs/jobs-steps/
 jobs:
-  build-train-test-package:
+  install-build:
+    # For running on CircleCI's self-hosted runners - details taken from environment variables
+    machine: true
+    resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
+    # For running on CircleCI's compute resources
+    # docker:
+    #   - image: cimg/python:3.11.4
+    steps:
+      - checkout # Check out the code in the project directory
+      - check-python # Invoke command "check-python"
+      - create-env     
+      - run: 
+          command: sh ./tools/install.sh
+          name: Run script to install dependencies
+      - persist_to_workspace:
+          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
+          # taken to be the root directory of the workspace.
+          root: workspace
+          # Must be relative path from root
+          paths:
+            - venv
+            - training_data
+            - .env
+  train-test-package:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
@@ -41,12 +64,9 @@ jobs:
     # docker:
     #   - image: cimg/python:3.11.4
     steps: # Steps in jobs are run sequentially
-      - checkout
-      - check-python # Invoke command "check-python"
-      - create-env     
-      - run: 
-          command: sh ./tools/install.sh
-          name: Run script to install dependencies
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: /tmp/workspace
       - run:
           command: python3 ./ml/1_build.py
           name: Build the model
@@ -59,7 +79,7 @@ jobs:
       - run:
           command: python3 ./ml/4_package.py
           name: Package the model  
-  build-retrain-package:
+  retrain-package:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
@@ -67,12 +87,9 @@ jobs:
     # docker:
     #   - image: cimg/python:3.11.4
     steps:
-      - checkout
-      - check-python # Invoke command "check-python"
-      - create-env     
-      - run: 
-          command: sh ./tools/install.sh
-          name: Run script to install dependencies
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: /tmp/workspace
       - run:
           command: python3 ./ml/1_build.py
           name: Rebuild testing/training data
@@ -96,12 +113,9 @@ jobs:
     # docker:
     #   - image: cimg/python:3.11.4
     steps:
-      - checkout
-      - check-python # Invoke command "check-python"
-      - create-env   
-      - run: 
-          command: sh ./tools/install.sh
-          name: Run script to install dependencies 
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: /tmp/workspace
       - run:
           command: python3 ./ml/5_deploy.py
           name: Deploy the model
@@ -113,12 +127,9 @@ jobs:
     # docker:
     #   - image: cimg/python:3.11.4
     steps:
-      - checkout
-      - check-python # Invoke command "check-python"
-      - create-env     
-      - run: 
-          command: sh ./tools/install.sh
-          name: Run script to install dependencies
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: /tmp/workspace
       - run:
           command: python3 ./ml/1_build.py
           name: Rebuild test data
@@ -133,18 +144,21 @@ workflows:
   # This workflow does a full build from scratch, and deploys the model
   build-deploy:
     jobs:
-      - build-train-test-package:
+      - install-build:
           filters:
             branches:
               only:
                 - main # Only run the job when the main branch is updated
+      - train-test-package:
+          requires: # Only run the job when the preceding step in the ML process has completed so that they are run sequentially
+            - install-build
       # Do not deploy without manual approval - you can inspect the console output from training and make sure you are happy to deploy
       - hold: # A job that will require manual approval in the CircleCI web application.
           requires: 
-            - build-train-test-package 
+            - train-test-package 
           type: approval # This key-value pair will set your workflow to a status of "On Hold"
       - deploy:
-          requires: # Only run the job when the preceding step in the ML process has completed so that they are run sequentially
+          requires: 
             - hold 
       - test-deployment:
           requires:
@@ -159,15 +173,18 @@ workflows:
                 only:
                   - retrain
       jobs:
-        - build-retrain-package:
+        - install-build:
             filters:
               branches:
                 only:
                   - retrain
+        - retrain-package:
+            requires:
+              - install-build
         # Do not deploy without manual approval - you can inspect the console output from training and make sure you are happy to deploy
         - hold: # A job that will require manual approval in the CircleCI web application.
             requires: 
-              - build-retrain-package
+              - retrain-package
             type: approval # This key-value pair will set your workflow to a status of "On Hold"
         - deploy:
             requires:
