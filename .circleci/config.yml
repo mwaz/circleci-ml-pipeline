@@ -50,7 +50,7 @@ jobs:
           command: python3 ./ml/1_build.py
           name: Build the model
       - persist_to_workspace:
-          # Workspaces let you persist data between jobs - saving time on re-downloading assets https://circleci.com/docs/workspaces/
+          # Workspaces let you persist data between jobs - saving time on re-downloading or recreating assets https://circleci.com/docs/workspaces/
           # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
           # taken to be the root directory of the workspace.
           root: .
@@ -60,7 +60,7 @@ jobs:
             - ml
             - .env
             - tools
-  train-test-package:
+  train:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
@@ -74,13 +74,21 @@ jobs:
       - run:
           command: python3 ./ml/2_train.py
           name: Train the model
+  test:
+    # For running on CircleCI's self-hosted runners - details taken from environment variables
+    machine: true
+    resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
+    # For running on CircleCI's compute resources
+    # docker:
+    #   - image: cimg/python:3.11.4
+    steps: # Steps in jobs are run sequentially
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: .
       - run:
           command: python3 ./ml/3_test.py
           name: Test the model
-      - run:
-          command: python3 ./ml/4_package.py
-          name: Package the model  
-  retrain-package:
+  retrain:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
@@ -95,14 +103,25 @@ jobs:
           command: python3 ./ml/6_retrain.py
           name: Retrain the model
       - run:
-          command: python3 ./ml/4_package.py
-          name: Package the model  
-      - run:
           # You could trigger custom notifications here so that the person responsible for a particular job is notified via email, Slack, etc.
           name: Run on fail status
           command: |
               echo "I am result of above failed job" 
           when: on_fail
+  package:
+    # For running on CircleCI's self-hosted runners - details taken from environment variables
+    machine: true
+    resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
+    # For running on CircleCI's compute resources
+    # docker:
+    #   - image: cimg/python:3.11.4
+    steps:
+      - attach_workspace:
+          # Must be absolute path or relative path from working_directory
+          at: .
+      - run:
+          command: python3 ./ml/4_package.py
+          name: Package the model  
   deploy:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
@@ -144,17 +163,26 @@ workflows:
             branches:
               only:
                 - main # Only run the job when the main branch is updated
-      - train-test-package:
+      - train:
           requires: # Only run the job when the preceding step in the ML process has completed so that they are run sequentially
             - install-build
-      # Do not deploy without manual approval - you can inspect the console output from training and make sure you are happy to deploy
-      - hold: # A job that will require manual approval in the CircleCI web application.
+      # To demonstrate how to run two tests concurrently, we'll run the same test twice under different names - if either required test fails, the next job that requires them (in this case, package) will not run
+      - test:
+          name: test_1
           requires: 
-            - train-test-package 
-          type: approval # This key-value pair will set your workflow to a status of "On Hold"
+            - train
+      - test:
+          name: test_2
+          requires: 
+            - train
+      - package:
+          requires:
+            - test_1
+            - test_2
+      # Do not deploy without manual approval - you can inspect the console output from training and make sure you are happy to deploy
       - deploy:
           requires: 
-            - hold 
+            - package 
       - test-deployment:
           requires:
             - deploy
@@ -173,18 +201,20 @@ workflows:
               branches:
                 only:
                   - retrain
-        - retrain-package:
+        - retrain:
             requires:
               - install-build
-        # Do not deploy without manual approval - you can inspect the console output from training and make sure you are happy to deploy
+        # Do not redeploy without manual approval - you can inspect the console output from training and make sure you are happy to deploy the retrained model
         - hold: # A job that will require manual approval in the CircleCI web application.
             requires: 
-              - retrain-package
+              - retrain
             type: approval # This key-value pair will set your workflow to a status of "On Hold"
-        - deploy:
+        - package:
             requires:
               - hold
+        - deploy:
+            requires:
+              - package
         - test-deployment:
             requires:
               - deploy
-
