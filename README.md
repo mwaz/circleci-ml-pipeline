@@ -35,6 +35,7 @@ This repository contains the following directories:
 - `ml` with an example ML workflow split across several Python scripts.
 - `tools` contains Bash scripts for setting up the environment to run the `ml` workflow, testing the workflows locally, and configuring a TensorFlow Serving server.
 - `.circleci` contains the CircleCI `config.yml` that defines the CircleCI pipelines that will call the `ml` scripts.
+  - Two workflows are included, one to build, and one to rebuild. Each workflow demonstrates different CircleCI features.
 
 #### Quick start
 
@@ -138,7 +139,7 @@ The included CircleCI configuration in `.circleci/config.yml` will run the inclu
 
 If a job fails, you can rapidly respond and confirm the issue in the cci UI by re-running only the failed parts of your workflow https://circleci.com/docs/workflows/#rerunning-a-workflows-failed-jobs.
 
-## Using GPU for ML tasks in the cloud and locally
+### Using GPU for ML tasks in the cloud and locally
 
 GPU resources can make fast work of ML tasks. 
 
@@ -147,6 +148,12 @@ CircleCI provides [GPU execution environments](https://circleci.com/execution-en
 You can also use self hosted runners to use your own GPU resources.
 
 Once you have an environment with GPU resources available, you can configure your ML package to utilize them (if the ML platform supports it). You can see how to do this with TensorFlow [here](https://www.tensorflow.org/install/gpu_plugins).
+
+### Notifications
+
+By default you will receive notifications on job failures and required approvals to your default CircleCi email address. You can configure other team members to receive notifications, set up web notifications, or connect your CircleCI pipeline to Slack or IRC - see the documentation for this [here](https://circleci.com/docs/notifications/).
+
+By customizing your notifications, you can make sure the right person is notified to fix a failed job and ensure your ML system stays accurate and available.
 
 ### Onwards!
 
