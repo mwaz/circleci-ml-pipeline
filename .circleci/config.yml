@@ -151,11 +151,3 @@ workflows:
               echo "I am result of above failed job" 
           when: on_fail
 
-# todo:
-# add a condition based on an env var to choose the deploy location - runner or cloud
-# maybe as part of the pipeline we should have CCI look for a specific word in the output of one of the steps and firing of an email about it or something - eg 'test accuracy 95% on blah' - could be cool example 
-
-
-# demo conditionals in retrain - if test fails , optionally trigger a full rebuild of the model https://support.circleci.com/hc/en-us/articles/360043638052-Conditional-steps-in-jobs-and-conditional-workflows
-# actually this is better suited for test_deploy - retry it 3 times with a 5s delay between each retry in case the server is slow
-
