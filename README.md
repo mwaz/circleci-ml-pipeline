@@ -63,6 +63,7 @@ The scripts in the `ml` directory provide the core functionality. Each script co
 #### Package
 
 - This prepares the trained model for use in a separate environment - saving it in a standard format and making it portable so that it can be deployed for use elsewhere.
+- It also uploads it to a package store/staging area. You could use the [S3 Orb](https://circleci.com/developer/orbs/orb/circleci/aws-s3) for this purpose to upload your ML artifacts and training data instead of SSH as used in this tutorial.
 
 #### Deploy
 
@@ -138,6 +139,8 @@ You will need to set the following [environment variables](https://circleci.com/
 The included CircleCI configuration in `.circleci/config.yml` will run the included scripts as a CI/CD pipeline. You can build on this example to experiment with different [CircleCI features](https://circleci.com/docs/).
 
 If a job fails, you can rapidly respond and confirm the issue in the cci UI by re-running only the failed parts of your workflow https://circleci.com/docs/workflows/#rerunning-a-workflows-failed-jobs.
+
+CircleCI requires a valid configuration to run. You can use the CircleCI web interface to edit your `.circleci/config.yml` file, which will include linting and show you any schema problems, or use the [CircleCI command line tools](https://circleci.com/docs/local-cli/) to [validate your configuration](https://circleci.com/docs/how-to-use-the-circleci-local-cli/#validate-a-circleci-config) locally.
 
 ### Using GPU for ML tasks in the cloud and locally
 
