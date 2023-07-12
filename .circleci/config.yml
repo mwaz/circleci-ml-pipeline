@@ -190,10 +190,6 @@ workflows:
                   - retrain
       jobs:
         - install-build:
-            filters:
-              branches:
-                only:
-                  - retrain
         - retrain:
             requires:
               - install-build
