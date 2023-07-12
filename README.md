@@ -134,6 +134,11 @@ You will need to set the following [environment variables](https://circleci.com/
 - DEPLOY_SERVER_PASSWORD
 - DEPLOY_SERVER_PATH
 
+And the following are required if using a self-hosted runner:
+
+- RUNNER_NAMESPACE
+- RUNNER_RESOURCE_CLASS
+
 ### Using CircleCI
 
 The included CircleCI configuration in `.circleci/config.yml` will run the included scripts as a CI/CD pipeline. You can build on this example to experiment with different [CircleCI features](https://circleci.com/docs/).
