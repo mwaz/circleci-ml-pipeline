@@ -189,7 +189,7 @@ workflows:
                 only:
                   - retrain
       jobs:
-        - install-build:
+        - install-build
         - retrain:
             requires:
               - install-build
