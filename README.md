@@ -99,15 +99,15 @@ The scripts in the `ml` directory provide the core functionality. Each script co
 
 The machine that will run these tasks (either as a CircleCI self-hosted runner or if running the scripts locally) will require Python 3 be installed. On Ubuntu, run:
 
-    sudo apt install python3 pip3
+    sudo apt install python3 python3-pip python3-venv
 
-You can install a virtual environment and the required Python packages by running the install script:
+You can install a virtual environment and the required Python packages by running the install script (only required for manually testing, the pipeline will call it when required):
 
     sh ./tools/install.sh
 
 If you want to install the packages yourself, run:
 
-    pip install tensorflow numpy matplotlib pysftp python-dotenv paramiko requests
+    pip3 install tensorflow numpy matplotlib pysftp python-dotenv paramiko requests
 
 ### TensorFlow Serving
 
@@ -134,10 +134,9 @@ You will need to set the following [environment variables](https://circleci.com/
 - DEPLOY_SERVER_PASSWORD
 - DEPLOY_SERVER_PATH
 
-And the following are required if using a self-hosted runner:
+### Self hosted runner details
 
-- RUNNER_NAMESPACE
-- RUNNER_RESOURCE_CLASS
+You will need to update the included CircleCI configuration to replace RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS with the details of your own runners.
 
 ### Using CircleCI
 
