@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script sets up a Python virtual environment and installs the required packages for running the ML workflow scripts in the ml directory
-python -m venv ./venv
+python3 -m venv ./venv
 source ./venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
+pip3 install --upgrade pip
+pip3 install -r requirements.txt
