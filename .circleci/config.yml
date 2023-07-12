@@ -36,7 +36,7 @@ jobs:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
-    # For running on CircleCI's compute resources
+    # For running on CircleCI's compute resources you would replace the above with the following for all jobs:
     # docker:
     #   - image: cimg/python:3.11.4
     steps:
@@ -64,9 +64,6 @@ jobs:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
-    # For running on CircleCI's compute resources
-    # docker:
-    #   - image: cimg/python:3.11.4
     steps: # Steps in jobs are run sequentially
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
@@ -74,13 +71,14 @@ jobs:
       - run:
           command: python3 ./ml/2_train.py
           name: Train the model
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ml # Only files in the ml directory have changed and need to be persisted back to the workspace
   test:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
-    # For running on CircleCI's compute resources
-    # docker:
-    #   - image: cimg/python:3.11.4
     steps: # Steps in jobs are run sequentially
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
@@ -92,9 +90,7 @@ jobs:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
-    # For running on CircleCI's compute resources
-    # docker:
-    #   - image: cimg/python:3.11.4
+
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
@@ -108,13 +104,15 @@ jobs:
           command: |
               echo "I am result of above failed job" 
           when: on_fail
+      - persist_to_workspace:
+          root: .
+          paths:
+            - ml # Only files in the ml directory have changed and need to be persisted back to the workspace
   package:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
-    # For running on CircleCI's compute resources
-    # docker:
-    #   - image: cimg/python:3.11.4
+
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
@@ -126,9 +124,7 @@ jobs:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
-    # For running on CircleCI's compute resources
-    # docker:
-    #   - image: cimg/python:3.11.4
+
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
@@ -140,9 +136,6 @@ jobs:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
     resource_class: bgmorton/runner-test # Update this to reflect your self-hosted runner resource class details
-    # For running on CircleCI's compute resources
-    # docker:
-    #   - image: cimg/python:3.11.4
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
@@ -166,19 +159,19 @@ workflows:
       - train:
           requires: # Only run the job when the preceding step in the ML process has completed so that they are run sequentially
             - install-build
-      # To demonstrate how to run two tests concurrently, we'll run the same test twice under different names - if either required test fails, the next job that requires them (in this case, package) will not run
+      # To demonstrate how to run two tests concurrently, we'll run the same test twice under different names - if either required test fails, the next job that requires them (in this case, package) will not run - https://circleci.com/docs/workflows/#concurrent-job-execution
       - test:
-          name: test_1
+          name: test-1
           requires: 
             - train
       - test:
-          name: test_2
+          name: test-2
           requires: 
             - train
       - package:
           requires:
-            - test_1
-            - test_2
+            - test-1
+            - test-2
       # Do not deploy without manual approval - you can inspect the console output from training and make sure you are happy to deploy
       - deploy:
           requires: 
