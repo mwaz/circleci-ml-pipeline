@@ -41,8 +41,6 @@ jobs:
     # docker:
     #   - image: cimg/python:3.11.4
     steps:
-      - run: mkdir -p workspace
-      - run: cd workspace
       - checkout # Check out the code in the project directory
       - check-python # Invoke command "check-python"
       - create-env     
@@ -53,7 +51,7 @@ jobs:
           # Workspaces let you persist data between jobs - saving time on re-downloading assets https://circleci.com/docs/workspaces/
           # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
           # taken to be the root directory of the workspace.
-          root: workspace
+          # root: workspace
           # Must be relative path from root
           paths:
             - venv
