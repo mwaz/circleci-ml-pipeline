@@ -76,10 +76,10 @@ jobs:
 workflows:
   # This workflow does a full build from scratch, and deploys the model
   full-build:
-    # filters:
-    #   branches: # You can also use tags, or a combination of both
-    #     only:
-    #       - main
+    filters:
+      branches: # You can also use tags, or a combination of both
+        only:
+          - main
     jobs:
       - install
       - build:
@@ -115,14 +115,17 @@ workflows:
             - wait-5
   # This workflow retrains an existing model and redeploys it
   retrain:
-  #  triggers:
-  #     - schedule:
-  #         cron: "0 0 * * *"
-  #         filters:
-  #           branches:
-  #             only:
-  #               - main
-  #               - beta
+    filters:
+      branches: # You can also use tags, or a combination of both
+        only:
+          - retrain
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - retrain
     jobs:
       - install
       - build:
