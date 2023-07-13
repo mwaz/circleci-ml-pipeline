@@ -22,7 +22,7 @@ If you're unfamiliar, here's a quick run-down of the ML tools used in this repo:
 
 ## Usage notes
 
-All commands in this repository should be invoked from the root directory, for example:
+All commands in this repository should be invoked from its root directory, for example:
 
     sh ./tools/install.sh
     python3 ./ml/1_build.py
