@@ -75,12 +75,16 @@ The scripts in the `ml` directory provide the core functionality. Each script co
 - Deploying a model doesn't mean it's finished - new data will be arriving which can be used to retrain it to improve its accuracy.
 - In this example, a retraining step can replace the train step in this workflow to retrain an existing model rather than creating a new one.
 
+*Note that the retrain script is designed to fail by default! Comment out the exception in the Python script to see it succeed*
+
 #### Test deployed model
 
 - Ensuring a successful deployment is important, so this example makes a quick REST call to TensorFlow Serving to ensure that it receives a response.
 
 ## Prerequisites
 
+- A CircleCI account and a GitHub account.   
+  - See the [CircleCI quickstart guide](https://circleci.com/docs/getting-started/) for how to get up and running with both.
 - A CircleCI self-hosted runner.
   - This can be a local machine or set up as part of an [auto-scaling deployment](https://circleci.com/blog/autoscale-self-hosted-runners-aws/) for larger workloads.
   - See **Python** below for installing additional requirements for the runner.
@@ -89,8 +93,6 @@ The scripts in the `ml` directory provide the core functionality. Each script co
   - However, it may be preferable to run this on CircleCI's infrastructure to take advantage of the available pre-built images and machine classes (see the **GPU** section below), or simply to reduce the amount of infrastructure you have to maintain by using CircleCI's managed cloud resources
     - If you are doing this, you will need to make sure CircleCI can access the required network resources by securely exposing them, or adding SSH tunnels or [VPN configuration](https://support.circleci.com/hc/en-us/articles/360049397051-How-To-Set-Up-a-VPN-Connection-During-Builds) to your CircleCI pipeline steps or scripts.
     - If you want to quickly test this repository on CircleCI's managed compute without connecting it to your network resources, comment out the *package*, *deploy*, *retrain* and *test_deployed_model* steps in the pipeline.
-- A CircleCI account and a GitHub account.   
-  - [CircleCI quickstart guide](https://circleci.com/docs/getting-started/).
 - A server with SSH access and Docker installed. 
   - See **TensorFlow Serving** below for a script for setting this up.
   - Your runner should be able to reach this machine on the network.
