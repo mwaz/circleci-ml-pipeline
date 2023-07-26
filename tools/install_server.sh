@@ -4,8 +4,7 @@
 #Commands to spin up a quick TensorFlow Serving server for use with this example
 
 # Install Docker
-sudo apt install docker.io 
-# Or better yet, follow the instructions at https://docs.docker.com/engine/install/ubuntu/ for the latest official version
+# Follow the instructions at https://docs.docker.com/engine/install/ubuntu/ for the latest official version for your platform
 
 # Create the directories and grant permissions so that the user defined in the .env file and docker can read/write to them
 sudo mkdir -p /var/models/staging # so that docker will have something to bind to, it will be populated later
