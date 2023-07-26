@@ -23,6 +23,12 @@ commands:
             DEPLOY_SERVER_PATH=$DEPLOY_SERVER_PATH
             EOF
           name: Create .env file containing secrets
+  activate-venv:
+    steps:
+      - run:
+          # Activate the Python virtual environment set up in the install-build job
+          command: source ./venv/bin/activate
+          name: Activate virtual environment
   wait-5:
     steps:
       - run:
@@ -68,6 +74,7 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
+      - activate-venv
       - run:
           command: python3 ./ml/2_train.py
           name: Train the model
@@ -83,6 +90,7 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
+      - activate-venv
       - run:
           command: python3 ./ml/3_test.py
           name: Test the model
@@ -95,6 +103,7 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
+      - activate-venv
       - run:
           command: python3 ./ml/6_retrain.py
           name: Retrain the model
@@ -117,6 +126,7 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
+      - activate-venv
       - run:
           command: python3 ./ml/4_package.py
           name: Package the model  
@@ -129,6 +139,7 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
+      - activate-venv
       - run:
           command: python3 ./ml/5_deploy.py
           name: Deploy the model
@@ -140,6 +151,7 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
+      - activate-venv
       - wait-5
       - run:
           command: python3 ./ml/7_test_deployed_model.py
