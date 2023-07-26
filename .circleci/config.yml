@@ -33,7 +33,7 @@ commands:
 # See: https://circleci.com/docs/jobs-steps/
 jobs:
   install-build:
-    # For running on CircleCI's self-hosted runners - details taken from environment variables
+    # For running on CircleCI's self-hosted runners
     machine: true
     resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
     # For running on CircleCI's compute resources you would replace the above with the following for all jobs:
@@ -44,7 +44,7 @@ jobs:
       - check-python # Invoke command "check-python"
       - create-env     
       - run: 
-          command: sh ./tools/install.sh
+          command: source ./tools/install.sh
           name: Run script to install dependencies
       - run:
           command: python3 ./ml/1_build.py
