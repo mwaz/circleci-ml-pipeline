@@ -23,12 +23,6 @@ commands:
             DEPLOY_SERVER_PATH=$DEPLOY_SERVER_PATH
             EOF
           name: Create .env file containing secrets
-  activate-venv:
-    steps:
-      - run:
-          # Activate the Python virtual environment set up in the install-build job
-          command: source ./venv/bin/activate
-          name: Activate virtual environment
   wait-5:
     steps:
       - run:
@@ -52,9 +46,8 @@ jobs:
       - run: 
           command: source ./tools/install.sh
           name: Run script to install dependencies
-      - activate-venv
       - run:
-          command: source ./venv/bin/activate && python3 ./ml/1_build.py
+          command: source ./venv/bin/activate && python3 ./ml/1_build.py # Activate the Python virtual environment before running Python scripts
           name: Build the model
       - persist_to_workspace:
           # Workspaces let you persist data between jobs - saving time on re-downloading or recreating assets https://circleci.com/docs/workspaces/
@@ -63,10 +56,10 @@ jobs:
           root: .
           # Must be relative path from root
           paths:
-            - venv
-            - ml
-            - .env
-            - tools
+            - venv # Persist the Python virtual environment
+            - ml # Persist the ml directory which now includes model and training data
+            - .env # Persist the .env file containing secrets
+            - tools # Persist the tools directory
   train:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
@@ -75,9 +68,8 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
-      - activate-venv
       - run:
-          command: python3 ./ml/2_train.py
+          command: source ./venv/bin/activate && python3 ./ml/2_train.py
           name: Train the model
       - persist_to_workspace:
           root: .
@@ -91,9 +83,8 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
-      - activate-venv
       - run:
-          command: python3 ./ml/3_test.py
+          command: source ./venv/bin/activate && python3 ./ml/3_test.py
           name: Test the model
   retrain:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
@@ -104,9 +95,8 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
-      - activate-venv
       - run:
-          command: python3 ./ml/6_retrain.py
+          command: source ./venv/bin/activate && python3 ./ml/6_retrain.py
           name: Retrain the model
       - run:
           # You could trigger custom notifications here so that the person responsible for a particular job is notified via email, Slack, etc.
@@ -127,9 +117,8 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
-      - activate-venv
       - run:
-          command: python3 ./ml/4_package.py
+          command: source ./venv/bin/activate && python3 ./ml/4_package.py
           name: Package the model  
   deploy:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
@@ -140,9 +129,8 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
-      - activate-venv
       - run:
-          command: python3 ./ml/5_deploy.py
+          command: source ./venv/bin/activate && python3 ./ml/5_deploy.py
           name: Deploy the model
   test-deployment:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
@@ -152,10 +140,9 @@ jobs:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
           at: .
-      - activate-venv
       - wait-5
       - run:
-          command: python3 ./ml/7_test_deployed_model.py
+          command: source ./venv/bin/activate && python3 ./ml/7_test_deployed_model.py
           name: Test the deployed model
 
 # Invoke jobs via workflows
