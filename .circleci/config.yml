@@ -52,6 +52,7 @@ jobs:
       - run: 
           command: source ./tools/install.sh
           name: Run script to install dependencies
+      - activate-venv
       - run:
           command: python3 ./ml/1_build.py
           name: Build the model
