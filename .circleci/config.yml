@@ -14,7 +14,7 @@ commands:
   create-env:
     steps:
       - run:
-          # Environment variables must be configured in CircleCI project or in a context
+          # Environment variables must be configured in a CircleCI project or context
           command: |
             cat \<<- EOF > .env
             DEPLOY_SERVER_HOSTNAME=$DEPLOY_SERVER_HOSTNAME
@@ -35,7 +35,7 @@ jobs:
   install-build:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
-    resource_class: NAMESPACE/RUNNER-NAME # Update this to reflect your self-hosted runner resource class details
+    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
     # For running on CircleCI's compute resources you would replace the above with the following for all jobs:
     # docker:
     #   - image: cimg/python:3.11.4
@@ -51,7 +51,7 @@ jobs:
           name: Build the model
       - persist_to_workspace:
           # Workspaces let you persist data between jobs - saving time on re-downloading or recreating assets https://circleci.com/docs/workspaces/
-          # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
+          # Must be an absolute path or relative path from working_directory. This is a directory on the container that is
           # taken to be the root directory of the workspace.
           root: .
           # Must be relative path from root
@@ -63,7 +63,7 @@ jobs:
   train:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
-    resource_class: NAMESPACE/RUNNER-NAME # Update this to reflect your self-hosted runner resource class details
+    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
     steps: # Steps in jobs are run sequentially
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
@@ -78,7 +78,7 @@ jobs:
   test:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
-    resource_class: NAMESPACE/RUNNER-NAME # Update this to reflect your self-hosted runner resource class details
+    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
     steps: # Steps in jobs are run sequentially
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
@@ -89,7 +89,7 @@ jobs:
   retrain:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
-    resource_class: NAMESPACE/RUNNER-NAME # Update this to reflect your self-hosted runner resource class details
+    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
 
     steps:
       - attach_workspace:
@@ -111,7 +111,7 @@ jobs:
   package:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
-    resource_class: NAMESPACE/RUNNER-NAME # Update this to reflect your self-hosted runner resource class details
+    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
 
     steps:
       - attach_workspace:
@@ -123,7 +123,7 @@ jobs:
   deploy:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
-    resource_class: NAMESPACE/RUNNER-NAME # Update this to reflect your self-hosted runner resource class details
+    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
 
     steps:
       - attach_workspace:
@@ -135,7 +135,7 @@ jobs:
   test-deployment:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
     machine: true
-    resource_class: NAMESPACE/RUNNER-NAME # Update this to reflect your self-hosted runner resource class details
+    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
     steps:
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
@@ -148,7 +148,7 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/workflows/
 workflows:
-  # This workflow does a full build from scratch, and deploys the model
+  # This workflow does a full build from scratch and deploys the model
   build-deploy:
     jobs:
       - install-build:
@@ -157,7 +157,7 @@ workflows:
               only:
                 - main # Only run the job when the main branch is updated
       - train:
-          requires: # Only run the job when the preceding step in the ML process has completed so that they are run sequentially
+          requires: # Only run the job when the preceding step in the ML process has been completed so that they are run sequentially
             - install-build
       # To demonstrate how to run two tests concurrently, we'll run the same test twice under different names - if either required test fails, the next job that requires them (in this case, package) will not run - https://circleci.com/docs/workflows/#concurrent-job-execution
       - test:
