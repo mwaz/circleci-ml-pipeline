@@ -54,7 +54,7 @@ jobs:
           name: Run script to install dependencies
       - activate-venv
       - run:
-          command: python3 ./ml/1_build.py
+          command: source ./venv/bin/activate && python3 ./ml/1_build.py
           name: Build the model
       - persist_to_workspace:
           # Workspaces let you persist data between jobs - saving time on re-downloading or recreating assets https://circleci.com/docs/workspaces/
