@@ -108,7 +108,31 @@ The machine that will run these tasks (whether as a CircleCI self-hosted runner 
 
     sudo apt install python3 python3-pip python3-venv
 
+This project uses Python [virtual environments](https://docs.python.org/3/library/venv.html), to keep all code and dependencies in the project directory, rather than installing them globally.
+
+### TensorFlow Serving
+
+An additional script located at `tools/install_server.sh` is supplied for spinning up a Docker container running TensorFlow Serving for testing.
+
+Note that you must first install Docker according to its [installation instructions](https://docs.docker.com/engine/install/) for your platform.
+
+You will need to supply the details of the machine this server is running on in your `.env` file so that the Python scripts can access it.
+
+### Test this project locally
+
+To test this project without importing it into CircleCI, you can run `tools/test_build.sh` and `tools/test_retrain.sh` in the Python virtual environment, after creating a `.env` file with the necessary configuration as shown in `.env.example`.
+
 You can install a virtual environment and the required Python packages by running the install script located at `tools/install.sh` (only required for manual testing — the pipeline will call it when required).
+
+    # Use the source command to execute install.sh so that the virtual environment is activated for the current session
+    source ./tools/install.sh
+
+    # Run the pipeline scripts for local testing
+    bash ./tools/test_build.sh
+    bash ./tools/test_retrain.sh
+
+    # Deactivate the virtual environment
+    deactivate
 
 The Python packages required by the example ML scripts are:
 
@@ -118,19 +142,9 @@ The Python packages required by the example ML scripts are:
     pysftp 
     python-dotenv 
     paramiko 
-    requests
+    requests 
 
-### TensorFlow Serving
-
-An additional script located at `/tools/install_server.sh` is supplied for spinning up a Docker container running TensorFlow Serving for testing.
-
-Note that you must first install Docker according to its [installation instructions](https://docs.docker.com/engine/install/) for your platform.
-
-You will need to supply the details of the machine this server is running on in your `.env` file so that the Python scripts can access it.
-
-### Test this project locally
-
-To test this project without importing it into CircleCI, you can run `tools/test_build.sh` and `tools/test retrain.sh` after creating a `.env` file with the necessary configuration, as shown in `.env.example`.
+These are installed, with their dependencies, but `install.sh` into the virtual environment.
 
 ## Setting up the project in CircleCI
 
