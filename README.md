@@ -122,7 +122,7 @@ You will need to supply the details of the machine this server is running on in 
 
 To test this project without importing it into CircleCI, you can run `tools/test_build.sh` and `tools/test_retrain.sh` in the Python virtual environment, after creating a `.env` file with the necessary configuration as shown in `.env.example`.
 
-You can install a virtual environment and the required Python packages by running the install script located at `tools/install.sh` (only required for manual testing — the pipeline will call it when required).
+You can install a virtual environment and the required Python packages by running the install script located at `tools/install.sh` (only required for manual testing - the pipeline will call it when required).
 
     # Use the source command to execute install.sh so that the virtual environment is activated for the current session
     source ./tools/install.sh
@@ -144,7 +144,7 @@ The Python packages required by the example ML scripts are:
     paramiko 
     requests 
 
-These are installed, with their dependencies, but `install.sh` into the virtual environment.
+These are installed with their dependencies by `install.sh` into the virtual environment.
 
 ## Setting up the project in CircleCI
 
