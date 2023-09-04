@@ -100,7 +100,7 @@ jobs:
           # You could trigger custom notifications here so that the person responsible for a particular job is notified via email, Slack, etc.
           name: Run on fail status
           command: |
-              echo "I am result of above failed job" 
+              echo "I am the result of the above failed job" 
           when: on_fail
       - persist_to_workspace:
           root: .
