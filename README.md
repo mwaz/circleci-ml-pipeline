@@ -6,6 +6,10 @@ Given the complexity and bespoke nature of ML models and workflows, this example
 
 Thus, this example uses a simple TensorFlow/Keras-based ML workflow, as the focus is on the CI/CD automation pipeline. Your workflows’ stages and methodology will most likely differ, but the principles will be the same: break down your ML process, automate the training and retraining of data, and let your CI/CD platform handle any failures and notify the responsible parties as part of MLOps best practices.
 
+The contents of this repository are discussed in the below two-part tutorial:
+- https://circleci.com/blog/ci-for-machine-learning/
+- https://circleci.com/blog/cd-for-machine-learning/
+
 ## Credits
 
 The code in this repository is adapted from the following TensorFlow tutorial:
