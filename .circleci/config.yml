@@ -61,8 +61,11 @@ jobs:
             - tools # Persist the tools directory
   train:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
-    machine: true
-    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    #machine: true
+    #resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    docker:
+      - image: cimg/python:3.11.4
+    
     steps: # Steps in jobs are run sequentially
       - attach_workspace:
           # Must be absolute path or relative path from working_directory
