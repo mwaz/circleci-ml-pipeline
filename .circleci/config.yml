@@ -38,7 +38,7 @@ jobs:
     #resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
     # For running on CircleCI's compute resources you would replace the above with the following for all jobs:
     docker:
-      - image: cimg/python:3.11.4
+      - image: cimg/python:3.13.2
     steps:
       - checkout # Check out the code in the project directory
       - check-python # Invoke command "check-python"
@@ -64,7 +64,7 @@ jobs:
     #machine: true
     #resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
     docker:
-      - image: cimg/python:3.11.4
+      - image: cimg/python:3.13.2
     
     steps: # Steps in jobs are run sequentially
       - attach_workspace:
@@ -84,7 +84,7 @@ jobs:
     #resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
     
     docker:
-      - image: cimg/python:3.11.4
+      - image: cimg/python:3.13.2
     steps: # Steps in jobs are run sequentially
       - attach_workspace:
           at: .
@@ -97,7 +97,7 @@ jobs:
     #resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
 
     docker:
-      - image: cimg/python:3.11.4
+      - image: cimg/python:3.13.2
     steps:
       - attach_workspace:
           at: .
@@ -119,7 +119,7 @@ jobs:
     #machine: true
     #resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
     docker:
-      - image: cimg/python:3.11.4
+      - image: cimg/python:3.13.2
 
     steps:
       - attach_workspace:
@@ -132,7 +132,7 @@ jobs:
     #machine: true
     #resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
     docker:
-      - image: cimg/python:3.11.4
+      - image: cimg/python:3.13.2
     steps:
       - attach_workspace:
           at: .
@@ -144,7 +144,7 @@ jobs:
     # machine: true
     # resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
     docker:
-      - image: cimg/python:3.11.4
+      - image: cimg/python:3.13.2
     steps:
       - attach_workspace:
           at: .
