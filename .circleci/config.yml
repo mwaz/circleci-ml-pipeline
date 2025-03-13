@@ -34,11 +34,11 @@ commands:
 jobs:
   install-build:
     # For running on CircleCI's self-hosted runners
-    machine: true
-    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    #machine: true
+    #resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
     # For running on CircleCI's compute resources you would replace the above with the following for all jobs:
-    # docker:
-    #   - image: cimg/python:3.11.4
+    docker:
+      - image: cimg/python:3.11.4
     steps:
       - checkout # Check out the code in the project directory
       - check-python # Invoke command "check-python"
@@ -77,8 +77,11 @@ jobs:
             - ml # Only files in the ml directory have changed and need to be persisted back to the workspace
   test:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
-    machine: true
-    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    #machine: true
+    #resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    
+    docker:
+      - image: cimg/python:3.11.4
     steps: # Steps in jobs are run sequentially
       - attach_workspace:
           at: .
@@ -87,9 +90,11 @@ jobs:
           name: Test the model
   retrain:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
-    machine: true
-    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    #machine: true
+    #resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
 
+    docker:
+      - image: cimg/python:3.11.4
     steps:
       - attach_workspace:
           at: .
@@ -108,8 +113,10 @@ jobs:
             - ml # Only files in the ml directory have changed and need to be persisted back to the workspace
   package:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
-    machine: true
-    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    #machine: true
+    #resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    docker:
+      - image: cimg/python:3.11.4
 
     steps:
       - attach_workspace:
@@ -119,9 +126,10 @@ jobs:
           name: Package the model  
   deploy:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
-    machine: true
-    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
-
+    #machine: true
+    #resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    docker:
+      - image: cimg/python:3.11.4
     steps:
       - attach_workspace:
           at: .
@@ -130,8 +138,10 @@ jobs:
           name: Deploy the model
   test-deployment:
     # For running on CircleCI's self-hosted runners - details taken from environment variables
-    machine: true
-    resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    # machine: true
+    # resource_class: RUNNER_NAMESPACE/RUNNER_RESOURCE_CLASS # Update this to reflect your self-hosted runner resource class details
+    docker:
+      - image: cimg/python:3.11.4
     steps:
       - attach_workspace:
           at: .
